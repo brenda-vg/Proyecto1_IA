@@ -384,3 +384,4 @@ def try_out():
 
 # EJECUCION
 try_out()
+input("Presiona Enter para salir...")
