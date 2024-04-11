@@ -15,7 +15,6 @@ Requisitos:
 Este programa requiere Python 3.x para ejecutarse.
 
 """
-
 import heapq        # To use the priority queue
 import itertools    # To check for all city combinations
 import sys          # To finish the execution in the testing mode
@@ -250,138 +249,27 @@ def get_problem(graph_i):
 
     return start_vertex, end_vertex
 
-def check_combinations(graph_i):
-    """
-    Descripción:
-    Esta función busca la trayectoria y costo de todos los pares de ciudades posibles en el grafo.
-
-    Parámetros:
-    - graph_i: Recibe una instancia de WeightedGraph
-
-    Devolución:
-    No devuelve ningún valor, imprime todos los resultados.
-    """
-    city_pairs = get_city_pairs(graph_i.get_vertices())
-    print("Pares de ciudades:")
-    for pair in city_pairs:
-        if FLAG_PRINT:
-            print('-----------------------------------------------------------------------')
-        print()
-        print(pair)
-        #Notemos que revisa en ambos ordenes (de A a B y de B a A)
-        #porque el algoritmo explora aristas distintas dependiendo de la dirección 
-
-        #Revisa de la ciudad0 a la ciudad1
-        cost,path = uniform_cost_search(graph_i,pair[0],pair[1])
-        if FLAG_PRINT:
-            print('La solucion es: ',end='')
-        print(cost,path)
-        if FLAG_PRINT:
-            print('\n\n')
-
-        #Revisa de la ciudad1 a la ciudad0
-        cost,path = uniform_cost_search(graph_i,pair[1],pair[0])
-        if FLAG_PRINT:
-            print('La solucion es: ',end='')
-        print(cost,path)
-        if FLAG_PRINT:
-            print('\n\n')
-
-def get_city_pairs(city_list):
-    """
-    Descripción:
-    Esta función genera todas las combinaciones posibles que tengan 2 elementos
-
-    Parámetros:
-    - city_list: Una lista de todos los vertices de un grafo
-
-    Devolución:
-    Devuelve una lista (list) cuyos valores son tuplas (tuple) con dos elementos (ciudad1, ciudad2) de tipos (str,str)
-    """
-
-    # Generar todas las combinaciones posibles de 2 elementos (pares)
-    city_pairs = list(itertools.combinations(city_list, 2))
-    return city_pairs
-
 # GLOBAL VARIABLES
 # Esta variable en True genera las busquedas paso a paso, en False imprime unicamente el costo y la trayectoria
 FLAG_PRINT = True
 
-
-def main():     # The graph instance used is the RomaniaFill() and asks for two cities
-    """
-    Descripción:
-    Esta función usa el grafo de Rumania y pregunta por dos ciudades, ejecuta la busqueda paso a paso
-
-    Parámetros:
-    Nada.
-
-    Devolución:
-    Nada.
-    """
-
-    graph_i = RomaniaFill()
-
-    print("Ciudades:", graph_i.get_vertices())
-    print()
-
-    start_vertex, end_vertex = get_problem(graph_i)
-    cost, path = uniform_cost_search(graph_i, start_vertex, end_vertex)
-    if cost != float('inf'):
-        print('De {start} a {end}'.format(start=start_vertex, end=end_vertex))
-        print('Costo: {costo}'.format(costo=cost))
-        print('Trayectoria: {trayectoria}'.format(trayectoria=path))
-    else:
-        print('No se puede alcanzar la ciudad elegida')
-
-def try_out():
-    """
-    Descripción:
-    Esta función usa el grafo de Rumania.
-    Permite buscar entre dos ciudades o buscar entre todos los pares de ciudades,
-    También permite buscar con la bandera FLAG_PRINT en True o en False
-
-    Parámetros:
-    Nada.
-
-    Devolución:
-    Nada.
-    """
-
-    global FLAG_PRINT   #Hace que sucesivas ediciones de FLAG_PRINT modifiquen la variable global y no una local
-
-    print('Welcome to the temporal checking mode')
-    print('What would you want to do?')
-    print('1. Check standard functioning (main)')
-    print('2. Check functioning')
-    option_choosen = input()
-    
-    if option_choosen == '1':
-        main()
-    elif option_choosen == '2':
-        print('Would you like to')
-
-        print('1. Find the solution between two cities')
-        print('2. Find the solution between all cities')
-        op_two_or_all = input()
-        if op_two_or_all != '1' and op_two_or_all != '2':
-            print('No time to check for an invalid option choice, so bye bye')
-            sys.exit()
-
-        vbs = input('Do you want to use the verbose mode? Y/N: ')
-        if vbs == 'Y':
-            FLAG_PRINT = True
-        else:
-            FLAG_PRINT = False
-
-        if op_two_or_all == '1':
-            main()
-        else:
-            graph_i = RomaniaFill()
-            check_combinations(graph_i)
-    else:
-        print('No valid option was choosen, au revoir')
-
 # EJECUCION
-try_out()
-input("Presiona Enter para salir...")
+if __name__ == "__main__":
+    while True:
+        graph_i = RomaniaFill()
+
+        print("Ciudades:", graph_i.get_vertices())
+        print()
+
+        start_vertex, end_vertex = get_problem(graph_i)
+        cost, path = uniform_cost_search(graph_i, start_vertex, end_vertex)
+        if cost != float('inf'):
+            print('De {start} a {end}'.format(start=start_vertex, end=end_vertex))
+            print('Costo: {costo}'.format(costo=cost))
+            print('Trayectoria: {trayectoria}'.format(trayectoria=path))
+        else:
+            print('No se puede alcanzar la ciudad elegida')
+
+        choice = input('\n\n¿Desea repetir el programa? (Si/No): ')
+        if choice.lower() != 'si':
+            break

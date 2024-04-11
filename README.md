@@ -14,8 +14,6 @@ El problema que aborda este proyecto es encontrar la ruta más corta entre dos c
 
 - Implementación de la clase `WeightedGraph` para representar el grafo ponderado.
 - Función `uniform_cost_search(graph, start, goal)` para resolver el problema de encontrar la ruta más corta.
-- Función `try_out()` que permite ejecutar el programa con opciones estándar o personalizadas.
-- Función `main()` que permite una ejecución estandar del programa.
 
 ## Público Objetivo
 
@@ -29,16 +27,11 @@ El público objetivo de este proyecto son el profesor de la materia y los compa�
 
 ## Instalación
 
-El único requisito es tener instalado Python 3. Para ejecutar el programa, simplemente ejecuta el intérprete de Python 3, en automático se ejecuta la función `try_out()`.
+El único requisito es tener instalado Python 3. Para ejecutar el programa, simplemente ejecuta el intérprete de Python 3, en automático se ejecuta el programa siempre y cuando este esté siendo ejecutado como el programa principal (if __name__ == "__main__")
 
 ## Uso
 
-Una vez ejecutado el programa, puedes seleccionar entre diferentes opciones:
-1. Ejecución estándar.
-2. Ejecución personalizada, que incluye:
-   - Ejecución entre dos ciudades.
-   - Ejecución entre todas las combinaciones de ciudades posibles.
-   - Opciones detalladas y resumidas.
+Una vez ejecutado el programa se solicita una ciudad de partida y una ciudad de destino, al finalizar, da la ruta resultante y da la opción de ejecutar el programa de nuevo.
 
 ## Estructura de Directorios
 
