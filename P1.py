@@ -1,20 +1,22 @@
 """
 Nombre del programa: P1.py
-Autor: Valdez Guzman Brenda
+Autor: Valdez Guzman Brenda, Domínguez Palacios Jesús Alejandro
 Fecha de creación: 2024-03-31
-Version: 1.0
+Version: 2.0
 
 Descripción:
 Este programa realiza el metodo de ucs paso a paso a través del mapa de Rumania
 
 Uso:
 Para ejecutar el programa, simplemente ejecuta este archivo Python desde la línea de comandos.
-Utiliza 1 para la ejecución estandar, 2 para otras opciones de ejecucion
 
 Requisitos:
 Este programa requiere Python 3.x para ejecutarse.
+Requiere instalar matplotlib y networkx
 
 """
+import networkx as nx
+import matplotlib.pyplot as plt
 import heapq        # To use the priority queue
 import itertools    # To check for all city combinations
 import sys          # To finish the execution in the testing mode
@@ -123,12 +125,13 @@ def uniform_cost_search(graph_i, start, goal):
     - end: Recibe una ciudad de llegada (str)
 
     Devolución:
-    Devuelve una tupla con dos valores de tipo (int,str), de la forma (costo, trayectoria)
+    Devuelve una tupla con tres valores de tipo (int,str,list), de la forma (costo, trayectoria,caminos_explorados)
     """
     step = 0
     frontier = [(0, start, start)]  # Priority queue of (cost, node)
     explored = set()
     cost_so_far = {start: 0} # Dictionary to track lowest cost to each node
+    explored_paths = []
 
     if FLAG_PRINT:
         print('------------------ Paso: {level} \t - \t Ciudades exploradas: {node}'.format(level=step,node=''))
@@ -142,7 +145,7 @@ def uniform_cost_search(graph_i, start, goal):
         step += 1
 
         if current_node == goal:
-            return cost, prev_path
+            return cost, prev_path, explored_paths
 
         # If the currend node was not explored, we explore it.
         if current_node not in explored:
@@ -158,7 +161,7 @@ def uniform_cost_search(graph_i, start, goal):
                     if neighbor not in cost_so_far or new_cost < cost_so_far[neighbor]:
                         if neighbor in cost_so_far:
                             if FLAG_PRINT:
-                                print('The previous cost to {n} was {pc}, now it is {nc} \nWe erase the previous path to {n}'.format(n=neighbor,pc =cost_so_far[neighbor], nc=new_cost, pp=prev_path))
+                                print('El costo anterior a {n} era {pc}, ahora es {nc} \nSe elimina la ruta anterior a {n}'.format(n=neighbor,pc =cost_so_far[neighbor], nc=new_cost, pp=prev_path))
                         cost_so_far[neighbor] = new_cost
                         # Remove previous path from the frontier if it exists
                         # Creates a whole new frontier but only includes the ones that are not the neighbor
@@ -167,10 +170,12 @@ def uniform_cost_search(graph_i, start, goal):
 
                         # If you don't want that feature, you erase the lines above but this push must be maintained
                         heapq.heappush(frontier, (new_cost, neighbor, new_path))
+                        # This line is intended to save a list of every path explored to use them later to graphic the graph
+                        explored_paths.append(new_path)
         else:
             #TODO: Note: Due to the condition that avoid several costlier paths to reached cities,
             # now it is impossible to reach this condition. However, if the mentioned condition was removed,
-            # this line would be necessary
+            # this line would note the fact that an error has ocurred
             print('THIIIIIIIIIIS was already explored')
             print(current_node)
 
@@ -183,7 +188,51 @@ def uniform_cost_search(graph_i, start, goal):
                 print('{costo}:\t{path}'.format(costo=element[0],path=element[2]))
             print()
 
-    return float('inf'),''  # If goal is not reachable
+    return float('inf'),'',[]  # If goal is not reachable
+
+def draw_graph(graph, paths, start, goal, explored_paths):
+    """
+    Descripción:
+    Esta función dibuja un gráfico de forma de mapa con los caminos explorados y agrega en rojo el que lleva al final
+
+    Parámetros:
+    - graph: Una instancia de WeightedGraph
+    - paths: Una lista con cadenas que tienen todos los nodos de la trayectoria (list de str)
+    - start: Una ciudad de partida (str)
+    - goal: Una ciudad de destino (str)
+    - explored_paths: Una lista con todos los destinos explorados
+
+    Devolución:
+    No devuelve nada
+    """
+    # Create an empty graph with no nodes and no edges
+    G = nx.Graph()
+
+    # For every path in each explored path adds an edge with the vertices and the color g
+    for exp_path in explored_paths:
+        for i in range(len(exp_path) - 1):
+            G.add_edge(exp_path[i], exp_path[i + 1], color='g')
+
+    # For every node in the resulting path adds an edge with the vertices and the color r
+    for path in paths:
+        for i in range(len(path) - 1):
+            G.add_edge(path[i], path[i + 1], color='r')
+
+    # Position nodes using Fruchterman-Reingold force-directed algorithm
+    pos = nx.spring_layout(G)
+
+    # Asigns the color to the vertices according to the color used above (green and red)
+    edge_colors = nx.get_edge_attributes(G, 'color')
+    colors = [edge_colors[edge] for edge in G.edges()]
+
+    # Draws the graph
+    nx.draw_networkx_nodes(G, pos, node_color='b')
+    nx.draw_networkx_edges(G, pos, edge_color=colors, width=2)
+    nx.draw_networkx_labels(G, pos, font_color='black')
+
+    # Shows the graph in a matplot window
+    plt.title(f"Desglose del camino desde {start} hasta {goal}")
+    plt.show()
 
 def RomaniaFill():
     """
@@ -262,11 +311,14 @@ if __name__ == "__main__":
         print()
 
         start_vertex, end_vertex = get_problem(graph_i)
-        cost, path = uniform_cost_search(graph_i, start_vertex, end_vertex)
+        cost, path, explored_paths = uniform_cost_search(graph_i, start_vertex, end_vertex)
         if cost != float('inf'):
             print('De {start} a {end}'.format(start=start_vertex, end=end_vertex))
             print('Costo: {costo}'.format(costo=cost))
             print('Trayectoria: {trayectoria}'.format(trayectoria=path))
+
+            # This line is the one in charge of drawing the graph
+            draw_graph(graph_i, [path.split('-')], start_vertex, end_vertex, [exp_path.split('-') for exp_path in explored_paths])
         else:
             print('No se puede alcanzar la ciudad elegida')
 

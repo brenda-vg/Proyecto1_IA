@@ -27,7 +27,7 @@ El público objetivo de este proyecto son el profesor de la materia y los compa�
 
 ## Instalación
 
-El único requisito es tener instalado Python 3. Para ejecutar el programa, simplemente ejecuta el intérprete de Python 3, en automático se ejecuta el programa siempre y cuando este esté siendo ejecutado como el programa principal (if __name__ == "__main__")
+El requisito es tener instalado Python 3. Además, se deben instalar las librerías "Matplotlib" y "Networkx" ejecutando "pip3 install" desde la terminal. Para ejecutar el programa, simplemente ejecuta el intérprete de Python 3, en automático se ejecuta el programa siempre y cuando este esté siendo ejecutado como el programa principal (if __name__ == "__main__")
 
 ## Uso
 
@@ -44,4 +44,4 @@ Los usuarios pueden contribuir al proyecto o informar sobre problemas a través 
 
 ## Notas Adicionales
 
-- Desarrollado en MacOS, no ha sido probado en otras plataformas.
+- Desarrollado en MacOS y Windows, no ha sido probado en linux.
